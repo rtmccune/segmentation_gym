@@ -23,6 +23,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Add these lines to the top of your script
+#import tensorflow
+#import transformers
+#import sys
+
+#print("--- VERIFYING RUNTIME VERSIONS ---")
+#print(f"Python version: {sys.version}")
+#print(f"TensorFlow version: {tensorflow.__version__}")
+# Keras version is tied to TensorFlow's in this setup
+#print(f"Keras version: {tensorflow.keras.__version__}")
+#print(f"Transformers version: {transformers.__version__}")
+#print("------------------------------------")
+
+# ... rest of your script follows
+
 import sys,os
 import json, gc
 

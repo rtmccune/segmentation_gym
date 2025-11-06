@@ -41,6 +41,23 @@ import random
 random.seed(0)
 
 
+####
+## BEGIN ADDED FOR HPC
+####
+
+# Restrict OpenMP and TensorFlow to 12 threads
+os.environ["OMP_NUM_THREADS"] = "12"
+os.environ["TF_NUM_INTEROP_THREADS"] = "12"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "12"
+
+import tensorflow as tf
+tf.config.threading.set_inter_op_parallelism_threads(12)
+tf.config.threading.set_intra_op_parallelism_threads(12)
+
+####
+## END ADDED FOR HPC
+####
+
 
 ##========================================================
 ## USER INPUTS

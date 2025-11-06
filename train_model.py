@@ -31,27 +31,48 @@ from random import shuffle
 import pandas as pd
 from skimage.transform import resize
 
+####
+## BEGIN ADDED FOR HPC
+####
+
+# Restrict OpenMP and TensorFlow to 12 threads
+os.environ["OMP_NUM_THREADS"] = "12"
+os.environ["TF_NUM_INTEROP_THREADS"] = "12"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "12"
+
+import tensorflow as tf
+tf.config.threading.set_inter_op_parallelism_threads(12)
+tf.config.threading.set_intra_op_parallelism_threads(12)
+
+data_path = ''
+val_data_path = ''
+configfile = ''
+
+####
+## END ADDED FOR HPC
+####
+
 ###############################################################
 ## VARIABLES
 ###############################################################
 
-root = Tk()
-root.filename =  filedialog.askdirectory(initialdir = "./",title = "Select directory of TRAIN data files")
-data_path = root.filename
+#root = Tk()
+#root.filename =  filedialog.askdirectory(initialdir = "./",title = "Select directory of TRAIN data files")
+#data_path = root.filename
 print(data_path)
-root.withdraw()
+#root.withdraw()
 
-root = Tk()
-root.filename =  filedialog.askdirectory(initialdir = data_path,title = "Select directory of VALIDATION data files")
-val_data_path = root.filename
+#root = Tk()
+#root.filename =  filedialog.askdirectory(initialdir = data_path,title = "Select directory of VALIDATION data files")
+#val_data_path = root.filename
 print(val_data_path)
-root.withdraw()
+#root.withdraw()
 
-root = Tk()
-root.filename =  filedialog.askopenfilename(initialdir = data_path,title = "Select config file",filetypes = (("config files","*.json"),("all files","*.*")))
-configfile = root.filename
+#root = Tk()
+#root.filename =  filedialog.askopenfilename(initialdir = data_path,title = "Select config file",filetypes = (("config files","*.json"),("all files","*.*")))
+#configfile = root.filename
 print(configfile)
-root.withdraw()
+#root.withdraw()
 
 configfile = os.path.normpath(configfile)
 data_path = os.path.normpath(data_path)

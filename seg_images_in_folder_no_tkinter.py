@@ -158,10 +158,13 @@ if __name__ == "__main__":
     parser.add_argument('--images_dir', type=str, required=True, help='Directory of images (or npzs) to segment')
     parser.add_argument('--weights', type=str, required=True, help='Model weights (.h5) file')
 
+    parser.add_argument('--file_list', type=str, required=False, help='Optional: Path to a text file containing specific images to process')
+    
     args = parser.parse_args()
 
     sample_direc = args.images_dir
     weights = args.weights
+    file_list = args.file_list
 
     print(f"images_dir = {sample_direc}")
     print(f"weights = {weights}")
@@ -339,13 +342,23 @@ if __name__ == "__main__":
     ####################################
 
     # The following lines prepare the data to be predicted
-    sample_filenames = sorted(glob(sample_direc+os.sep+'*.*'))
-    if sample_filenames[0].split('.')[-1]=='npz':
-        sample_filenames = sorted(tf.io.gfile.glob(sample_direc+os.sep+'*.npz'))
+    if file_list and os.path.exists(file_list):
+        print(f"Reading images from file list: {file_list}")
+        with open(file_list, 'r') as f:
+            # Read lines, strip whitespace, and ensure they are full paths if your file list only has filenames
+            # Assuming here your file list contains absolute paths or paths relative to CWD.
+            # If they are just filenames, use: [os.path.join(sample_direc, line.strip()) for line in f if line.strip()]
+            sample_filenames = [line.strip() for line in f if line.strip()]
+
     else:
-        sample_filenames = sorted(tf.io.gfile.glob(sample_direc+os.sep+'*.jpg'))
-        if len(sample_filenames)==0:
-            sample_filenames = sorted(glob(sample_direc+os.sep+'*.png'))
+        print(f"Scanning directory: {sample_direc}")
+        sample_filenames = sorted(glob(sample_direc+os.sep+'*.*'))
+        if sample_filenames and sample_filenames[0].split('.')[-1]=='npz':
+            sample_filenames = sorted(tf.io.gfile.glob(sample_direc+os.sep+'*.npz'))
+        else:
+            sample_filenames = sorted(tf.io.gfile.glob(sample_direc+os.sep+'*.jpg'))
+            if len(sample_filenames)==0:
+                sample_filenames = sorted(glob(sample_direc+os.sep+'*.png'))
 
     print('Number of samples: %i' % (len(sample_filenames)))
 

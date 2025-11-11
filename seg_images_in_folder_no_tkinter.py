@@ -348,7 +348,7 @@ if __name__ == "__main__":
             # Read lines, strip whitespace, and ensure they are full paths if your file list only has filenames
             # Assuming here your file list contains absolute paths or paths relative to CWD.
             # If they are just filenames, use: [os.path.join(sample_direc, line.strip()) for line in f if line.strip()]
-            sample_filenames = [line.strip() for line in f if line.strip()]
+            sample_filenames = [os.path.join(sample_direc, line.strip()) for line in f if line.strip()]
 
     else:
         print(f"Scanning directory: {sample_direc}")

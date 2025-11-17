@@ -23,43 +23,55 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sys, getopt, os 
+import sys, getopt, os
 
 ###==================================================================
-#===============================================================
-if __name__ == '__main__':
+# ===============================================================
+if __name__ == "__main__":
 
     argv = sys.argv[1:]
     try:
-        opts, args = getopt.getopt(argv,"h:t:") 
+        opts, args = getopt.getopt(argv, "h:t:")
     except getopt.GetoptError:
-        print('======================================')
-        print('python preprocess_data.py -t datatype') #
+        print("======================================")
+        print("python preprocess_data.py -t datatype")  #
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h':
-            print('======================================')
-            print('Example usage (merge_nd_inputs4pred): python preprocess_data.py -t 0') 
-            print('Example usage (make_ndwi_4pred): python preprocess_data.py -t 1') 
-            print('Example usage (make_mndwi_4pred): python preprocess_data.py -t 2') 
-            print('Example usage (make_ndwi_dataset): python preprocess_data.py -t 3') 
-            print('Example usage (make_mndwi_dataset): python preprocess_data.py -t 4') 
-            print('Example usage (vggjson2mask): python preprocess_data.py -t 5') 
-            print('======================================')
+        if opt == "-h":
+            print("======================================")
+            print(
+                "Example usage (merge_nd_inputs4pred): python preprocess_data.py -t 0"
+            )
+            print(
+                "Example usage (make_ndwi_4pred): python preprocess_data.py -t 1"
+            )
+            print(
+                "Example usage (make_mndwi_4pred): python preprocess_data.py -t 2"
+            )
+            print(
+                "Example usage (make_ndwi_dataset): python preprocess_data.py -t 3"
+            )
+            print(
+                "Example usage (make_mndwi_dataset): python preprocess_data.py -t 4"
+            )
+            print(
+                "Example usage (vggjson2mask): python preprocess_data.py -t 5"
+            )
+            print("======================================")
             sys.exit()
         elif opt in ("-t"):
             data_type = arg
             data_type = int(data_type)
 
-    if data_type==0:
+    if data_type == 0:
         from doodleverse_utils import merge_nd_inputs4pred
-    elif data_type==1:
+    elif data_type == 1:
         from doodleverse_utils import make_ndwi_4pred
-    elif data_type==2:
-        from doodleverse_utils import make_mndwi_4pred                
-    elif data_type==3:
+    elif data_type == 2:
+        from doodleverse_utils import make_mndwi_4pred
+    elif data_type == 3:
         from doodleverse_utils import make_ndwi_dataset
-    elif data_type==4:
+    elif data_type == 4:
         from doodleverse_utils import make_mndwi_dataset
-    elif data_type==5:
+    elif data_type == 5:
         from doodleverse_utils import vggjson2mask

@@ -30,23 +30,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
 from skimage.io import imsave, imread
-from glob import glob 
+from glob import glob
 import os
 from tqdm import tqdm
 
+
 ##========================================================
 def fromhex(n):
-    """ hexadecimal to integer """
+    """hexadecimal to integer"""
     return int(n, base=16)
+
 
 ##========================================================
 def label_to_colors(
     img,
     mask,
-    alpha,#=128,
-    colormap,#=class_label_colormap, #px.colors.qualitative.G10,
-    color_class_offset,#=0,
-    do_alpha,#=True
+    alpha,  # =128,
+    colormap,  # =class_label_colormap, #px.colors.qualitative.G10,
+    color_class_offset,  # =0,
+    do_alpha,  # =True
 ):
     """
     Take MxN matrix containing integers representing labels and return an MxNx4
@@ -71,7 +73,7 @@ def label_to_colors(
     for c in range(minc, maxc + 1):
         cimg[img == c] = colormap[(c + color_class_offset) % len(colormap)]
 
-    cimg[mask==1] = (0,0,0)
+    cimg[mask == 1] = (0, 0, 0)
 
     if do_alpha is True:
         return np.concatenate(
@@ -81,18 +83,20 @@ def label_to_colors(
         return cimg
 
 
-
 root = Tk()
-root.filename =  askdirectory(title = "Select directory of output npz files")
+root.filename = askdirectory(title="Select directory of output npz files")
 folder = root.filename
 print(folder)
 root.withdraw()
 
-files = glob(folder+os.sep+'*.npz')
+files = glob(folder + os.sep + "*.npz")
 print("Found {} files".format(len(files)))
 
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-classfile = askopenfilename(title='Select file containing class (label) names', filetypes=[("Pick classes.txt file","*.txt")])
+Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+classfile = askopenfilename(
+    title="Select file containing class (label) names",
+    filetypes=[("Pick classes.txt file", "*.txt")],
+)
 
 with open(classfile) as f:
     classes = f.readlines()
@@ -101,8 +105,8 @@ for anno_file in tqdm(files):
 
     data = dict()
     with load(anno_file, allow_pickle=True) as dat:
-        #create a dictionary of variables
-        #automatically converted the keys in the npz file, dat to keys in the dictionary, data, then assigns the arrays to data
+        # create a dictionary of variables
+        # automatically converted the keys in the npz file, dat to keys in the dictionary, data, then assigns the arrays to data
         for k in dat.keys():
             data[k] = dat[k]
         del dat
@@ -111,21 +115,37 @@ for anno_file in tqdm(files):
 
     NUM_LABEL_CLASSES = len(class_label_names)
 
-    if NUM_LABEL_CLASSES<=10:
+    if NUM_LABEL_CLASSES <= 10:
         class_label_colormap = px.colors.qualitative.G10
     else:
         class_label_colormap = px.colors.qualitative.Light24
 
-    cimg = label_to_colors(data['grey_label'], data['grey_label']==0, alpha=128, colormap=class_label_colormap, color_class_offset=0, do_alpha=False)
+    cimg = label_to_colors(
+        data["grey_label"],
+        data["grey_label"] == 0,
+        alpha=128,
+        colormap=class_label_colormap,
+        color_class_offset=0,
+        do_alpha=False,
+    )
 
-    imsave(anno_file.replace('.npz','.npz_cl.jpg'),
-                cimg, quality=100, chroma_subsampling=False, check_contrast=False)
+    imsave(
+        anno_file.replace(".npz", ".npz_cl.jpg"),
+        cimg,
+        quality=100,
+        chroma_subsampling=False,
+        check_contrast=False,
+    )
 
-    
-    gimg = data['av_prob_stack'][:,:,1]>.05
+    gimg = data["av_prob_stack"][:, :, 1] > 0.05
 
-    imsave(anno_file.replace('.npz','.npz_gl.jpg'),
-                gimg.astype('uint8'), quality=100, chroma_subsampling=False, check_contrast=False)
+    imsave(
+        anno_file.replace(".npz", ".npz_gl.jpg"),
+        gimg.astype("uint8"),
+        quality=100,
+        chroma_subsampling=False,
+        check_contrast=False,
+    )
 
 
 #

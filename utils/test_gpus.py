@@ -23,19 +23,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os 
+import os
 
 num_epochs = 3
 USE_GPU = True
-# USE_MULTI_GPU = True 
+# USE_MULTI_GPU = True
 USE_MULTI_GPU = False
 
 if USE_MULTI_GPU:
-    GPU_ID = '1,2'
+    GPU_ID = "1,2"
 else:
-    GPU_ID = '0'
+    GPU_ID = "0"
 
-os.environ['CUDA_VISIBLE_DEVICES'] = GPU_ID
+os.environ["CUDA_VISIBLE_DEVICES"] = GPU_ID
 
 import tensorflow as tf
 import tensorflow.keras as keras
@@ -45,13 +45,13 @@ import tensorflow.keras as keras
 # mixed_precision.set_global_policy('mixed_float16')
 # # tf.debugging.set_log_device_placement(True)
 
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
+physical_devices = tf.config.experimental.list_physical_devices("GPU")
 print(physical_devices)
 
 
 if physical_devices:
     try:
-        tf.config.experimental.set_visible_devices(physical_devices, 'GPU')
+        tf.config.experimental.set_visible_devices(physical_devices, "GPU")
     except RuntimeError as e:
         # Visible devices must be set at program startup
         print(e)
@@ -74,7 +74,7 @@ def get_compiled_model():
         loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
         metrics=[keras.metrics.SparseCategoricalAccuracy()],
         run_eagerly=True,
-        steps_per_execution=2
+        steps_per_execution=2,
     )
     return model
 
@@ -98,14 +98,20 @@ def get_dataset():
     x_train = x_train[:-num_val_samples]
     y_train = y_train[:-num_val_samples]
     return (
-        tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(batch_size),
+        tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(
+            batch_size
+        ),
         tf.data.Dataset.from_tensor_slices((x_val, y_val)).batch(batch_size),
         tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(batch_size),
     )
 
+
 if USE_MULTI_GPU:
     # Create a MirroredStrategy.
-    strategy = tf.distribute.MirroredStrategy([p.name.split('/physical_device:')[-1] for p in physical_devices], cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
+    strategy = tf.distribute.MirroredStrategy(
+        [p.name.split("/physical_device:")[-1] for p in physical_devices],
+        cross_device_ops=tf.distribute.HierarchicalCopyAllReduce(),
+    )
     print("Number of devices: {}".format(strategy.num_replicas_in_sync))
 
     # Open a strategy scope.
